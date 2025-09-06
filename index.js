@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const { Resend } = require("resend");
+const rateLimit = require('express-rate-limit');
 require("dotenv").config();
 
 const app = express();
@@ -20,8 +21,20 @@ const sanitize = (str) =>
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 
+
+// email rate limiter
+const emailRateLimiter = rateLimit({
+  windowMs: 24 * 60 * 60 * 1000, // 24 hours window
+  max: 3, // Limit each IP to 3 requests per windowMs
+  message: {
+    error: "You have reached the maximum of 3 messages for today. Please try again tomorrow."
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // Email route
-app.post("/api/send-email", async (req, res) => {
+app.post("/api/send-email", emailRateLimiter, async (req, res) => {
   const { name, email, message } = req.body;
 
   // Validate input
