@@ -49,7 +49,7 @@ app.post("/api/send-email", emailRateLimiter, async (req, res) => {
   try {
     const data = await resend.emails.send({
       from: "Portfolio Website <onboarding@resend.dev>",
-      to: ["cheetahmindset7@gmail.com"],
+      to: [process.env.MY_EMAIL_ID],
       subject: `New message from ${cleanName}`,
       html: `
         <div style="font-family: 'Helvetica Neue', sans-serif; background-color: #ffffff; padding: 24px; color: #1a1a1a; font-size: 16px; line-height: 1.6;">
